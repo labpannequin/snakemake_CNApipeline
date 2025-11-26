@@ -1,0 +1,21 @@
+Bootstrap: docker
+From: debian:bookworm-slim
+
+%post
+    apt-get update && apt-get install -y wget bzip2 && rm -rf /var/lib/apt/lists/*
+
+    # install Miniforge3
+    wget --no-check-certificate https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh
+    bash Miniforge3-Linux-x86_64.sh -b -p /opt/miniforge3
+    rm Miniforge3-Linux-x86_64.sh
+    export PATH=/opt/miniforge3/bin:$PATH
+
+    # install cramino
+    conda install -y -c conda-forge -c bioconda python=3.10.1 cramino=1.1.0
+    conda clean -a -y
+
+%environment
+    export PATH=/opt/miniforge3/bin:$PATH
+
+%runscript
+    exec cramino "$@"
